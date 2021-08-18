@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="8dp"
+    android:backgroundTint="@color/black">
+
+    <RelativeLayout
+        android:id="@+id/cardView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_margin="5dp"
+        android:background="@drawable/content_of_list">
+
+        <TextView
+            android:id="@+id/txtMagnitude"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="5dp"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:layout_marginStart="5dp"
+            android:textColor="@color/white"
+            android:background="@drawable/circle"
+            />
+
+        <TextView
+            android:id="@+id/txtView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/txtMagnitude"
+            android:singleLine="false"
+            android:textAlignment="textStart"
+            android:textColor="@color/white"
+            tools:ignore="RelativeOverlap"
+            />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
