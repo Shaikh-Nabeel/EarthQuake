@@ -1,7 +1,6 @@
 package com.nabeel130.earthquake;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,11 +12,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Helper {
-    public static int limit = 25;
+    public static int limit = 40;
     public static boolean isOrderByMagnitude= false;
     public static boolean isOrderByTime = false;
-//    private static final String urlForAsia =
 
+    public static URL selectedURL;
 
     public static String getFormattedDate(String timeInMilliSec){
 
@@ -45,13 +44,13 @@ public class Helper {
     }
 
     //url of api to fetch json data
-    public static URL getURL() throws MalformedURLException {
+    public static void getGlobalURL() throws MalformedURLException {
         String [] dates = getDates();
         String date1 = dates[0];
         String date2 = dates[1];
         String URL_JSON = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime="+date2+"&endtime="+date1+"&minmagnitude=4.5&limit="+limit;
         if(isOrderByMagnitude)URL_JSON += "&orderby=magnitude";
-        return new URL(URL_JSON);
+        selectedURL = new URL(URL_JSON);
     }
 
     public static String[] getDates(){
@@ -62,12 +61,13 @@ public class Helper {
         return dates;
     }
 
-    public static URL getCustomURL() throws MalformedURLException {
+    public static void getIndianRegionURL() throws MalformedURLException {
         String [] dates = getDates();
         String date1 = dates[0];
         String date2 = dates[1];
-        String URL_JSON = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime="+date2+"&endtime="+date1+"&minmagnitude=4.5&limit="+limit+"&minlatitude=8.4&maxlatitude=37.6&minlongitude=68&maxlongitude=97";
-        return new URL(URL_JSON);
+        String URL_JSON = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime="+date2+"&endtime="+date1+"&minmagnitude=4.5&limit="+limit+"&minlatitude=7.4&maxlatitude=38&minlongitude=67&maxlongitude=98";
+        if(isOrderByMagnitude)URL_JSON += "&orderby=magnitude";
+        selectedURL = new URL(URL_JSON);
     }
 
     private static String currentDateFromTime(long date){

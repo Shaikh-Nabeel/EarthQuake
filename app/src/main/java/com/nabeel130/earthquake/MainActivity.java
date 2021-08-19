@@ -1,9 +1,10 @@
 package com.nabeel130.earthquake;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
@@ -14,6 +15,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -21,13 +25,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,12 +44,21 @@ public class MainActivity extends AppCompatActivity {
     private String[] itemsURL;
     private ArrayList<Integer> listOfColors;
     private int size;
+    private CustomAdapter customAdapter;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        toolbar = findViewById(R.id.customToolB);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        toolbar.setSubtitle(R.string.world);
+        toolbar.setSubtitleTextColor(getResources().getColor(R.color.white));
+        setSupportActionBar(toolbar);
+
         listView = findViewById(R.id.listView1);
         listOfColors = new ArrayList<>();
         listOfColors.add(R.color.blue);
@@ -61,9 +68,68 @@ public class MainActivity extends AppCompatActivity {
         listOfColors.add(R.color.dull_green);
         size = listOfColors.size();
 
+        try {
+            Helper.getGlobalURL();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
         EarthquakeAsyncTask task = new EarthquakeAsyncTask();
         task.execute();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.my_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem menuItem){
+        int id = menuItem.getItemId();
+        boolean isClickedOnSort = false;
+        if(id == R.id.sort){
+            isClickedOnSort = true;
+            Helper.isOrderByMagnitude = !Helper.isOrderByMagnitude;
+            if(Helper.selectedURL.toString().contains("minlatitude"))
+                id = R.id.indianRegionMenu;
+            else
+                id = R.id.globalMenu;
+
+            if(Helper.isOrderByMagnitude)
+            Toast.makeText(getApplicationContext(),"Sort By Magnitude", Toast.LENGTH_LONG).show();
+        }
+
+        if(id == R.id.indianRegionMenu){
+            try {
+                if(isClickedOnSort || !Helper.selectedURL.toString().contains("minlatitude")){
+                    Helper.getIndianRegionURL();
+                    Log.d("jsonCode", Helper.selectedURL.toString());
+                    EarthquakeAsyncTask task = new EarthquakeAsyncTask();
+                    task.execute();
+                    toolbar.setSubtitle(R.string.indianRegion);
+                    customAdapter.notifyDataSetChanged();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }else if(id == R.id.globalMenu){
+            try {
+                if(isClickedOnSort || Helper.selectedURL.toString().contains("minlatitude")){
+                    Helper.getGlobalURL();
+                    Log.d("jsonCode", Helper.selectedURL.toString());
+                    EarthquakeAsyncTask task = new EarthquakeAsyncTask();
+                    task.execute();
+                    toolbar.setSubtitle(R.string.world);
+                    customAdapter.notifyDataSetChanged();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
+
 
     public void updateUI(String jsonData){
         try {
@@ -71,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
             if(TextUtils.isEmpty(jsonData) || jsonData.contentEquals("ERROR"))
                 return;
 
-            //extracting the data
+            //extracting the data from json
             JSONObject jsonObject = new JSONObject(jsonData);
             JSONArray jsonArray1 = jsonObject.optJSONArray("features");
 
@@ -106,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                 itemsURL[i] = url;
             }
 
-            CustomAdapter customAdapter = new CustomAdapter();
+            customAdapter = new CustomAdapter();
             listView.setAdapter(customAdapter);
 
         } catch (JSONException e) {
@@ -114,24 +180,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class EarthquakeAsyncTask extends AsyncTask<URL, Void, String> {
 
         Dialog progressDialog = new Dialog(MainActivity.this);
-
-        URL url;
-        {
-            try {
-                url = Helper.getCustomURL();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-        }
 
         @Override
         protected String doInBackground(URL... urls) {
             try {
                 Params params = new Params();
-                return params.makeHTTPRequest(url);
+                Log.d("jsonCode","Background code executed");
+                return params.makeHTTPRequest(Helper.selectedURL);
             } catch (IOException e) {
                 e.printStackTrace();
             }

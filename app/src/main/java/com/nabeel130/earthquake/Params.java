@@ -1,6 +1,5 @@
 package com.nabeel130.earthquake;
 
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +41,6 @@ public class Params {
             if(inputStream != null)
                 inputStream.close();
         }
-        Log.d("jsoncode", jsonResponse.substring(0,30));
         return jsonResponse;
     }
 

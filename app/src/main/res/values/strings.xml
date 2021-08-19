@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">EarthQuake</string>
     <string name="loading">Loading…</string>
+    <string name="indianRegion">Indian Region</string>
+    <string name="world">Global</string>
+    <string name="more">More</string>
+    <string name="sort">sort</string>
 </resources>
