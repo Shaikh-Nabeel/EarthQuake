@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginStart="8dp"
-    android:backgroundTint="@color/black">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="10dp"
+    android:elevation="8dp"
+    app:cardCornerRadius="9dp"
+    android:backgroundTint="@color/white">
 
     <RelativeLayout
         android:id="@+id/cardView1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:layout_margin="5dp"
-        android:background="@drawable/content_of_list">
+        android:layout_margin="5dp">
 
         <TextView
             android:id="@+id/txtMagnitude"
@@ -23,10 +22,12 @@
             android:layout_height="40dp"
             android:layout_alignParentStart="true"
             android:layout_marginTop="5dp"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
             android:gravity="center"
+            android:textSize="17sp"
             android:layout_marginStart="5dp"
             android:textColor="@color/white"
+            android:textStyle="bold"
             android:background="@drawable/circle"
             />
 
@@ -35,15 +36,123 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
             android:layout_marginTop="5dp"
             android:layout_marginStart="10dp"
             android:layout_toEndOf="@+id/txtMagnitude"
             android:singleLine="false"
             android:textAlignment="textStart"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            tools:text="New york"
+            android:textSize="20sp"
             tools:ignore="RelativeOverlap"
             />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtView1"
+            android:layout_toEndOf="@+id/txtMagnitude"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal"
+            android:id="@+id/dateTime_ll"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:text="@string/date"
+                />
+
+            <TextView
+                android:id="@+id/date_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                tools:text="12/03/2022"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="20dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:text="@string/time"
+                />
+
+            <TextView
+                android:id="@+id/time_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                tools:text="12/03/2022"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dateTime_ll"
+            android:layout_toEndOf="@+id/txtMagnitude"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:id="@+id/status_ll"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:text="@string/status"
+                />
+
+            <TextView
+                android:id="@+id/status_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:textSize="12sp"
+                android:textColor="@color/black"
+                tools:text="reviewed"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/viewMore_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:layout_marginStart="40dp"
+                android:textColor="@color/blue"
+                android:text="@string/more_details"
+                android:background="@drawable/view_more"
+                android:padding="10dp"
+                android:textStyle="bold"
+                android:drawablePadding="6dp"
+                app:drawableEndCompat="@drawable/skip_arrow_resize" />
+
+
+        </LinearLayout>
 
     </RelativeLayout>
 

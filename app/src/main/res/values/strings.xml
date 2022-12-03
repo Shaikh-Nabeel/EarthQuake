@@ -5,4 +5,8 @@
     <string name="world">Global</string>
     <string name="more">More</string>
     <string name="sort">sort</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="status">Status</string>
+    <string name="more_details">More details</string>
 </resources>

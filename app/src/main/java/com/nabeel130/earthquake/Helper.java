@@ -12,16 +12,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Helper {
-    public static int limit = 40;
+    public static int limit = 100;
     public static boolean isOrderByMagnitude= false;
     public static boolean isOrderByTime = false;
 
     public static URL selectedURL;
 
     public static String getFormattedDate(String timeInMilliSec){
-
         @SuppressLint("SimpleDateFormat") DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy");
-
         long milliSeconds= Long.parseLong(timeInMilliSec);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
@@ -48,7 +46,7 @@ public class Helper {
         String [] dates = getDates();
         String date1 = dates[0];
         String date2 = dates[1];
-        String URL_JSON = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime="+date2+"&endtime="+date1+"&minmagnitude=4.5&limit="+limit;
+        String URL_JSON = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime="+date2+"&endtime="+date1+"&minmagnitude=3.0&limit="+limit;
         if(isOrderByMagnitude)URL_JSON += "&orderby=magnitude";
         selectedURL = new URL(URL_JSON);
     }
@@ -65,7 +63,7 @@ public class Helper {
         String [] dates = getDates();
         String date1 = dates[0];
         String date2 = dates[1];
-        String URL_JSON = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime="+date2+"&endtime="+date1+"&minmagnitude=4.5&limit="+limit+"&minlatitude=7.4&maxlatitude=38&minlongitude=67&maxlongitude=98";
+        String URL_JSON = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime="+date2+"&endtime="+date1+"&minmagnitude=3.0&limit="+limit+"&minlatitude=7.4&maxlatitude=38&minlongitude=67&maxlongitude=98";
         if(isOrderByMagnitude)URL_JSON += "&orderby=magnitude";
         selectedURL = new URL(URL_JSON);
     }

@@ -27,6 +27,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nabeel130.earthquake.models.Properties;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,15 +37,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
-    private String[] itemsMagnitude;
-    private String[] itemsPlace;
-    private String[] itemsURL;
+    private List<Properties> data = new ArrayList<>();
     private ArrayList<Integer> listOfColors;
-    private int size;
     private CustomAdapter customAdapter;
     private Toolbar toolbar;
 
@@ -61,12 +62,10 @@ public class MainActivity extends AppCompatActivity {
 
         listView = findViewById(R.id.listView1);
         listOfColors = new ArrayList<>();
-        listOfColors.add(R.color.blue);
+        listOfColors.add(R.color.red);
+        listOfColors.add(R.color.orange);
         listOfColors.add(R.color.dark_green);
-        listOfColors.add(R.color.light_blue);
-        listOfColors.add(R.color.dark_blue);
         listOfColors.add(R.color.dull_green);
-        size = listOfColors.size();
 
         try {
             Helper.getGlobalURL();
@@ -142,9 +141,7 @@ public class MainActivity extends AppCompatActivity {
             JSONArray jsonArray1 = jsonObject.optJSONArray("features");
 
             if(!Helper.isEmpty(jsonArray1)) {
-                itemsPlace = new String[jsonArray1.length()];
-                itemsMagnitude = new String[jsonArray1.length()];
-                itemsURL = new String[jsonArray1.length()];
+                data.clear();
             }
             else
                 return;
@@ -153,25 +150,25 @@ public class MainActivity extends AppCompatActivity {
 
                 JSONObject jsonObject1 = jsonArray1.optJSONObject(i);
                 if(Helper.isEmpty(jsonObject1)) break;
-                JSONObject jsonObject2 = jsonObject1.optJSONObject("properties");
-                if(Helper.isEmpty(jsonObject2)) break;
+                JSONObject feature = jsonObject1.optJSONObject("properties");
+                if(Helper.isEmpty(feature)) break;
 
-                String magnitude = jsonObject2.optString("mag");
-                String timeInMillis = jsonObject2.optString("time");
-                String url = jsonObject2.optString("url");
-
-                String date = Helper.getFormattedDate(timeInMillis);
-                String time = Helper.getFormattedTime(timeInMillis);
-                String place = Helper.getCityCountryName(jsonObject2.optString("place"));
-                if(place.equals("null"))
-                    place = "Unknown, click to know more";
-                String data = "Place: "+place+"\nDate: "+date+"  "+"Time: "+time;
-
-                itemsPlace[i] = data;
-                itemsMagnitude[i] = magnitude;
-                itemsURL[i] = url;
+                Properties properties = new Properties(
+                        feature.optString("code"),
+                        feature.optString("type"),
+                        feature.optString("title"),
+                        feature.optString("magType"),
+                        feature.optInt("tsunami"),
+                        feature.optDouble("mag"),
+                        feature.optInt("gap"),
+                        feature.optString("place"),
+                        feature.optString("url"),
+                        feature.optLong("time"),
+                        feature.optString("detail"),
+                        feature.optString("status")
+                );
+                data.add(properties);
             }
-
             customAdapter = new CustomAdapter();
             listView.setAdapter(customAdapter);
 
@@ -199,9 +196,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            progressDialog.dismiss();
             if(result == null)
                 return;
-            progressDialog.dismiss();
             updateUI(result);
         }
 
@@ -210,6 +207,8 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             progressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             progressDialog.setContentView(R.layout.custom_dialog);
+            progressDialog.setCancelable(false);
+            progressDialog.setCanceledOnTouchOutside(false);
             progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             progressDialog.show();
         }
@@ -219,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return itemsPlace.length;
+            return data.size();
         }
 
         @Override
@@ -236,29 +235,45 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             @SuppressLint({"ViewHolder", "InflateParams"}) View myView = getLayoutInflater().inflate(R.layout.list_item,null);
-            TextView textView1 = myView.findViewById(R.id.txtView1);
-            textView1.setText(itemsPlace[position]);
-            TextView textView2 = myView.findViewById(R.id.txtMagnitude);
-            textView2.setText(itemsMagnitude[position]);
-            textView1.setOnClickListener(v -> goToURL(position));
+            TextView place = myView.findViewById(R.id.txtView1);
+            TextView magnitude = myView.findViewById(R.id.txtMagnitude);
+            TextView date_tv = myView.findViewById(R.id.date_tv);
+            TextView time_tv = myView.findViewById(R.id.time_tv);
+            TextView viewMore_tv = myView.findViewById(R.id.viewMore_tv);
+            TextView status_tv = myView.findViewById(R.id.status_tv);
+            viewMore_tv.setOnClickListener(v -> goToURL(position));
+            Properties properties = data.get(position);
+            place.setText(Objects.equals(properties.getPlace(), "null") ?"Unknown place":properties.getPlace());
+            magnitude.setText(String.valueOf(properties.getMag()).substring(0,3));
 
-            GradientDrawable gdOfTextView = (GradientDrawable) textView2.getBackground();
-            gdOfTextView.setColor(ContextCompat.getColor(getBaseContext(), listOfColors.get((position+1)%size)));
+            String date = Helper.getFormattedDate(String.valueOf(properties.getTime()));
+            String time = Helper.getFormattedTime(String.valueOf(properties.getTime()));
+            date_tv.setText(date);
+            time_tv.setText(time);
+            status_tv.setText(properties.getStatus());
 
-            RelativeLayout relativeLayout = myView.findViewById(R.id.cardView1);
-            GradientDrawable gradientDrawable =(GradientDrawable) relativeLayout.getBackground();
-            gradientDrawable.setColor(ContextCompat.getColor(getBaseContext(), listOfColors.get(position%size)));
+            GradientDrawable gdOfTextView = (GradientDrawable) magnitude.getBackground();
+            if(properties.getMag() <= 3.5){
+                gdOfTextView.setColor(ContextCompat.getColor(getBaseContext(), listOfColors.get(2)));
+            }else if(properties.getMag() <= 4.0){
+                gdOfTextView.setColor(ContextCompat.getColor(getBaseContext(), listOfColors.get(3)));
+            } else if(properties.getMag() <= 5.0){
+                gdOfTextView.setColor(ContextCompat.getColor(getBaseContext(), listOfColors.get(1)));
+            }else {
+                gdOfTextView.setColor(ContextCompat.getColor(getBaseContext(), listOfColors.get(0)));
+            }
+
             return myView;
         }
     }
 
     private void goToURL(int position){
-        if(itemsURL[position].equals("") || itemsURL[position] == null)
+        if(data.get(position).getUrl() == null || data.get(position).getUrl().equals(""))
             return;
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.addCategory(Intent.CATEGORY_BROWSABLE);
-        intent.setData(Uri.parse(itemsURL[position]));
+        intent.setData(Uri.parse(data.get(position).getUrl()));
         startActivity(intent);
     }
 }
