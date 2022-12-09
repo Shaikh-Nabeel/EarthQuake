@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -135,7 +134,6 @@ public class MainActivity extends AppCompatActivity {
 
             if(TextUtils.isEmpty(jsonData) || jsonData.contentEquals("ERROR"))
                 return;
-
             //extracting the data from json
             JSONObject jsonObject = new JSONObject(jsonData);
             JSONArray jsonArray1 = jsonObject.optJSONArray("features");
